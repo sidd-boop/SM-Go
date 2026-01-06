@@ -3,13 +3,14 @@ package auth
 import (
 	"time"
 	"errors"
+	"os"
 	
 	"golang.org/x/crypto/bcrypt"
 	
 	"github.com/golang-jwt/jwt/v4"
 )
 
-var jwtKey = []byte("your_secret_key")
+var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 
 type Service struct{
 	repo Repository
