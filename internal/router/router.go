@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"SM-Go/internal/auth"
 	"SM-Go/internal/db"
+	"SM-Go/internal/thought"
+	"SM-Go/internal/middleware"
 )
 
 func healthCheck(c *gin.Context) {
@@ -22,4 +24,18 @@ func RoutesHandler(r *gin.Engine) {
 		authGroup.POST("/register",authHandler.Register)
 		authGroup.POST("/login",authHandler.Login)
 	}
+
+	thoughtRepo:=thought.NewRepo(db.DB)
+	thoughtService:=thought.NewService(thoughtRepo)
+	thoughtHandler:=thought.NewHandler(thoughtService)
+	thoughtGroup:=r.Group("/thought")
+	thoughtGroup.Use(middleware.AuthMiddleware())
+	{
+		thoughtGroup.POST("",thoughtHandler.Create)
+		thoughtGroup.GET("",thoughtHandler.List)
+		thoughtGroup.GET("/:id",thoughtHandler.Get)
+	}
+
+
+
 }
