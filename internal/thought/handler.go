@@ -29,9 +29,14 @@ func (h *Handler) Create(c *gin.Context){
 		c.JSON(http.StatusBadRequest, gin.H{"error":"content is req"})
 	}
 
-	userID:=c.GetUint("user_id")
+	userID, exists:=c.Get("userID")
 
-	if err:=h.service.Create(req.Content, req.Tag, userID);err!=nil{
+	if !exists{
+		c.JSON(http.StatusUnauthorized, gin.H{"error":"user not authenticated"})
+		return
+	}
+
+	if err:=h.service.Create(req.Content, req.Tag, userID.(uint));err!=nil{
 		c.JSON(http.StatusInternalServerError, gin.H{"error":err.Error()})
 		return
 	}

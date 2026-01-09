@@ -46,7 +46,7 @@ func (s *Service) Login(email,password string)(string,error){
 	if err!=nil{
 		return "", errors.New("invalid username or password")
 	}
-	token,err := generateJWT(user.Email)
+	token,err := generateJWT(user.Email, user.ID)
 	if err!=nil{
 		return "",err
 	}
@@ -56,9 +56,11 @@ func (s *Service) Login(email,password string)(string,error){
 	return token,nil
 }
 
-func generateJWT(username string)(string,error){
+func generateJWT(email string, userID uint)(string,error){
 	claims := jwt.MapClaims{
-		"username": username,
+		
+		"username": email,
+		"user_id":float64(userID),
 		"exp": time.Now().Add(time.Hour * 72).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
